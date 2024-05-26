@@ -3,34 +3,39 @@
 #include <vector>
 #include <string>
 
-class Node_1; // Forward declaration
 
-class Node {
-public:
-    Node* next;
-    Node_1* pre;
-    int data;
-
-    Node() : next(nullptr), pre(nullptr), data(0) {}
-    Node(int d) : next(nullptr), pre(nullptr), data(d) {}
-};
-
+// Класс Node_1 для хранения данных учетных записей
 class Node_1 {
 public:
-    Node_1* next;
-    int accountNumber;
-    int password;
+    Node_1* next;       // Указатель на следующий узел
+    int accountNumber;  // Номер счета
+    int password;       // Пароль
 
     Node_1() : next(nullptr), accountNumber(0), password(0) {}
     Node_1(int a, int p) : next(nullptr), accountNumber(a), password(p) {}
 };
 
+
+// Класс Node для хранения основных данных хеш-таблицы
+class Node {
+public:
+    Node* next;   // Указатель на следующий узел
+    Node_1* pre;  // Указатель на связанный узел типа Node_1
+    int data;     // Хранимые данные
+
+    Node() : next(nullptr), pre(nullptr), data(0) {}
+    Node(int d) : next(nullptr), pre(nullptr), data(d) {}
+};
+
+
+// Класс Hashtable для управления хеш-таблицей
 class Hashtable {
 public:
-    Node* start;
+    Node* start;    // Начальный узел хеш-таблицы
 
     Hashtable() : start(nullptr) {}
 
+    // Метод для инициализации хеш-таблицы
     void starthash() {
         for (int i = 0; i < 12; i++) {
             Node* temp1 = new Node(i);
@@ -48,14 +53,15 @@ public:
         loadhashtable();
     }
 
+    // Метод для загрузки данных в хеш-таблицу из файла
     void loadhashtable() {
         int acc = 0, pass;
 
         std::ifstream read("hashtable.txt");
         while (read >> acc >> pass) {
-            if (match(acc, pass)) continue;
+            if (match(acc, pass)) continue;     // Пропустить дублирующиеся записи
 
-            int r = acc % 10;
+            int r = acc % 10;   // Определение индекса в хеш-таблице
             Node* c = start;
             while (c->data != r) {
                 c = c->next;
@@ -75,14 +81,16 @@ public:
         }
     }
 
+    // Метод для добавления новой учетной записи
     void add(int a, int p) {
         std::ofstream write("hashtable.txt", std::ios::app);
         write << a << '\n' << p << '\n';
-        starthash();
+        starthash();    // Обновление хеш-таблицы
     }
 
+    // Метод для проверки соответствия учетной записи и пароля
     bool match(int a, int p) {
-        int r = a % 10;
+        int r = a % 10;     // Определение индекса в хеш-таблице
         Node* c = start;
         while (c->data != r) {
             c = c->next;
@@ -98,6 +106,7 @@ public:
         return false;
     }
 
+    // Метод для отображения данных хеш-таблицы
     void display() {
         Node* current = start;
         while (current) {
@@ -106,6 +115,7 @@ public:
         }
     }
 
+    // Метод для отображения паролей учетных записей
     void displayPasswords() {
         starthash();
         Node* c = start;
@@ -119,6 +129,7 @@ public:
         }
     }
 
+    // Метод для удаления учетной записи по номеру счета
     void delete_password(int accountno) {
         std::ifstream read("hashtable.txt");
         std::vector<int> v;
@@ -137,32 +148,37 @@ public:
     }
 };
 
+
+// Класс BST_Node для узлов бинарного дерева поиска
 class BST_Node {
 public:
-    BST_Node* left;
-    BST_Node* right;
-    std::string name;
-    std::string address;
-    int account_number;
-    int password;
-    int balance;
+    BST_Node* left;   // Указатель на левый дочерний узел
+    BST_Node* right;  // Указатель на правый дочерний узел
+    std::string name;  // Имя пользователя
+    std::string address;  // Адрес пользователя
+    int account_number;  // Номер счета
+    int password;  // Пароль
+    int balance;  // Баланс
 
     BST_Node() : left(nullptr), right(nullptr), name(""), address(""), account_number(0), password(0), balance(0) {}
     BST_Node(const std::string& name, const std::string& address, int accountno, int password, int balance)
         : left(nullptr), right(nullptr), name(name), address(address), account_number(accountno), password(password), balance(balance) {}
 };
 
+
+// Класс BST_Tree для управления бинарным деревом поиска
 class BST_Tree {
-    std::vector<int> v;
+    std::vector<int> v;     // Вектор для временного хранения данных
 
 public:
-    BST_Node* Root;
-    Hashtable h;
+    BST_Node* Root;     // Корень дерева
+    Hashtable h;    // Хеш-таблица для управления учетными записями
 
     BST_Tree() : Root(nullptr) {}
 
+    // Метод для добавления новой учетной записи в дерево
     void add_Account(const std::string& name, const std::string& address, int accountno, int password, int balance) {
-        h.add(accountno, password);
+        h.add(accountno, password);     // Добавление данных в хеш-таблицу
         std::ofstream write("server.txt", std::ios::app);
         write << name << '\n' << address << '\n' << accountno << '\n' << password << '\n' << balance << '\n';
 
@@ -191,6 +207,7 @@ public:
         }
     }
 
+    // Метод для удаления учетной записи из дерева
     BST_Node* delete_Account(BST_Node* root, int accountno) {
         if (!root) {
             std::cout << "Tree is empty or account not found.\n";
@@ -218,6 +235,7 @@ public:
         return root;
     }
 
+    // Метод для снятия средств с учетной записи
     void withdraw(int accountno, int amount) {
         load_Server();
         BST_Node* temp = search(Root, accountno);
@@ -226,6 +244,7 @@ public:
         update_server(Root);
     }
 
+    // Метод для внесения средств на учетную запись
     void deposit(int accountno, int amount) {
         load_Server();
         BST_Node* temp = search(Root, accountno);
@@ -234,6 +253,7 @@ public:
         update_server(Root);
     }
 
+    // Метод для перевода средств между учетными записями
     void transfer(int sender_accountno, int reciever_accountno, int sender_amount) {
         load_Server();
         BST_Node* sender = search(Root, sender_accountno);
@@ -249,6 +269,7 @@ public:
         }
     }
 
+    // Метод для загрузки данных сервера в дерево
     void load_Server() {
         std::ifstream read("server.txt");
         std::string name, address;
@@ -284,6 +305,7 @@ public:
         }
     }
 
+    // Метод для обновления данных сервера
     void update_server(BST_Node* root) {
         std::ofstream write("server.txt", std::ios::trunc);
         if (root) {
@@ -291,6 +313,7 @@ public:
         }
     }
 
+    // Метод для поиска учетной записи в дереве
     BST_Node* search(BST_Node* root, int accountno) {
         if (!root || root->account_number == accountno) {
             return root;
@@ -301,6 +324,7 @@ public:
         return search(root->right, accountno);
     }
 
+    // Метод для загрузки данных сервера в дерево
     void printoinfo(BST_Node* root) {
         if (root) {
             printoinfo(root->left);
@@ -310,18 +334,19 @@ public:
     }
 
 private:
+    // Метод для нахождения максимального значения в поддереве
     void findMax(BST_Node* root) {
         while (root) {
             v.push_back(root->account_number);
             root = root->right;
         }
     }
-
+    // Метод для обновления транзакций
     void update_transactions(int accountno, int amount) {
         std::ofstream write("transactions.txt", std::ios::app);
         write << "Account: " << accountno << "\tAmount: " << amount << '\n';
     }
-
+    // Вспомогательный метод для обновления данных сервера
     void update_server_helper(BST_Node* root, std::ofstream& write) {
         if (root) {
             write << root->name << '\n' << root->address << '\n' << root->account_number << '\n' << root->password << '\n' << root->balance << '\n';
