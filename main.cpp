@@ -1,8 +1,30 @@
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
-#include <string>
 #include <vector>
+#include <string>
+
+
+class Node
+{
+public:	
+	Node()
+	{
+		next = nullptr;
+		pre = nullptr;
+		data = 0;
+	}
+	Node(int d)
+	{
+		next = nullptr;
+		pre = nullptr;
+		data = d;
+	}
+
+	Node* next;
+	Node_1* pre;
+	int data;
+};
 
 
 class Node_1
@@ -27,32 +49,11 @@ public:
 };
 
 
-class Node
-{
-public:
-	Node()
-	{
-		// двунаправленный узел, указателя на следующий и предыдущий узел.
-		next = nullptr;
-		pre = nullptr;
-		data = 0;
-	}
-	Node(int d)
-	{
-		next = nullptr;
-		pre = nullptr;
-		data = d;
-	}
-
-	Node* next;
-	Node_1* pre;
-	int data;	
-};
-
-
 class Hashtable
 {
-public:	
+public:
+	Node* start;
+
 	Hashtable()
 	{
 		start = nullptr;
@@ -226,14 +227,20 @@ public:
 		remove("hashtable.txt");
 		rename("temp.txt", "hashtable.txt");
 	}
-
-	Node* start;
 };
 
 
 class BST_Node
 {
 public:
+	BST_Node* left;
+	BST_Node* right;
+	std::string name;
+	std::string adress;
+	int account_number;
+	int password;
+	int balance;
+
 	BST_Node()
 	{
 		left = nullptr;
@@ -254,24 +261,17 @@ public:
 		this->balance = balance;
 		this->password = password;
 	}
-
-	BST_Node* left;
-	BST_Node* right;
-	std::string name;
-	std::string adress;
-	int account_number;
-	int password;
-	int balance;
 };
 
 
 class BST_Tree
 {
-public:
-	BST_Tree()
-	{
+	std::vector <int> v;
 
-	}
+public:
+	BST_Tree() {
+
+	}	
 	void add_Account(std::string name, std::string adress, int accountno, int password, int balance)
 	{
 		h.add(accountno, password);
@@ -314,7 +314,7 @@ public:
 	}
 	BST_Node* delete_Account(BST_Node* root, int accountno)
 	{
-		std::cout << "accountno"<<root->account_number;
+		//cout << "accountno"<<root->account_number;
 		if (root == nullptr)
 			std::cout << "it seems that Tree is empty OR You have entered wrong data" << std::endl;
 		else if (accountno < root->account_number)
@@ -425,7 +425,7 @@ public:
 		BST_Node* reciever = search(Root, reciever_accountno);
 		reciever->balance = reciever->balance + sender_amount;
 		update_server(Root);
-				
+
 		std::vector <int> data;
 		std::ifstream read;
 		read.open("transaction.txt", std::ios::app);
@@ -454,7 +454,7 @@ public:
 		remove("transaction.txt");
 		rename("temp.txt", "transaction.txt");
 
-		std::vector<int> data;
+		std::vector <int> data;
 		std::ifstream read;
 		read.open("transaction.txt", std::ios::app);
 		int line = 0;
@@ -481,7 +481,6 @@ public:
 		write.close();
 		remove("transaction.txt");
 		rename("temp.txt", "transaction.txt");
-
 	}
 	void transaction_history()
 	{
@@ -506,9 +505,7 @@ public:
 		int accountno = 0;
 		int password = 0;
 		int balance = 0;
-
 		//cin.ignore();
-
 		while (!read.eof())
 		{
 
@@ -521,7 +518,6 @@ public:
 			read >> balance;
 			read.ignore();
 			read.ignore();
-
 			/*
 					cout << name << endl;
 					cout << adress << endl;
@@ -530,10 +526,9 @@ public:
 					cout << balance << endl;
 
 					*/
-
 			if (name != "" && adress != "" && accountno != 0 && password != 0)
 			{
-				std::cout << "enter hua" << std::endl;
+				//cout << "enter hua" << endl;
 				BST_Node* temp = new BST_Node(name, adress, accountno, password, balance);
 				BST_Node* current = Root;
 				if (Root == nullptr)
@@ -606,6 +601,7 @@ public:
 		else if (accountno > root->account_number)
 			return (search(root->right, accountno));
 		return (root);
+
 	}
 	void printoinfo(BST_Node* root)
 	{
@@ -620,12 +616,9 @@ public:
 			printoinfo(root->right);
 		}
 	}
-		
-	Hashtable h;
-	BST_Node* Root;
 
-private:
-	std::vector <int> v;
+	BST_Node* Root;
+	Hashtable h;
 };
 
 
@@ -712,7 +705,7 @@ void staff()
 		std::cin >> condition;
 		if (condition == 1)
 		{
-			
+			// transaction file print karani ha account search kr k
 		}
 		if (condition == 2)
 		{
@@ -725,7 +718,7 @@ void staff()
 			std::cin >> amount;
 			t.transfer(senderaccountno, amount, recieveraccountno);
 		}
-		if (condition == 3)
+		if (condition == 3)  // withdraw
 		{
 			int accountno = 0, amount = 0;
 			std::cout << "please enter account number" << std::endl;
@@ -779,7 +772,7 @@ void customer()
 		}
 		if (condition == 2)
 		{
-			
+			// transaction file print karani ha account search kr k
 		}
 		if (condition == 3)
 		{
@@ -800,30 +793,35 @@ void boot()
 
 int main()
 {
-	int condition = 0;
+	void boot();
 
-	while (condition != 4) {
+	int condition = 0;
+	while (condition != 4)
+	{
 		std::cout << "YOU want to login as:\t\t\t\t\t\t" << std::endl << std::endl;
 		std::cout << "1-ADMIN" << std::endl;
 		std::cout << "2-STAFF" << std::endl;
 		std::cout << "3-CUSTOMER" << std::endl;
 		std::cin >> condition;
-
-		if (condition == 1) {
+		if (condition == 1)
+		{
 			admin();
 		}
-		if (condition == 2) {
-			staff();
+		if (condition == 2)
+		{
+
 		}
-		if (condition == 3) {
+		if (condition == 3)
+		{
 			customer();
 		}
-		if (condition == 4) {
-
+		if (condition == 4)
+		{
+			condition = 4;
 		}
 	}
 
 
-	std::cin.get();
+	system("pause");
 	return 0;
 }
